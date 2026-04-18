@@ -1,0 +1,4 @@
+# CI test stack — ephemeral, no named volumes (blueprint §3, §14).
+# Identical services to dev but all data is thrown away after the test run.
+# Used by GitHub Actions integration test step and Playwright E2E step.
+# Starts api on port 8001 to avoid conflicts with any local dev stack.

@@ -1,0 +1,4 @@
+-- Postgres initialisation script run once on first container start.
+-- Enables extensions: pgcrypto (for gen_random_uuid()), pg_trgm (for text search).
+-- Creates application role 'innersight' with LOGIN and grants on all tables.
+-- Full schema is managed by Alembic migrations — this file only handles extensions + roles.

@@ -1,0 +1,3 @@
+# Hydra config for IsolationForest baseline.
+# Params: n_estimators, contamination, random_state.
+# Date range for training, feature_version, output collection name.

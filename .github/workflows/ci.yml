@@ -1,0 +1,5 @@
+# CI pipeline: runs on every push and PR.
+# Steps: setup (checkout, cache pnpm + uv) → lint (ruff, mypy, eslint, tsc) →
+# unit tests (pytest + vitest) → docker build → integration tests (PR only,
+# spins up docker-compose.test.yml) → eval gate (blocks PR if AUC or
+# precision_at_50 drops >0.02 vs main) → security scan (Trivy + Semgrep).

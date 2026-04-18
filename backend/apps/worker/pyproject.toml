@@ -1,0 +1,5 @@
+# Python project config for the worker service.
+# Dependencies: typer, sqlalchemy[asyncio], asyncpg, qdrant-client, minio,
+#   torch, torch-geometric, scikit-learn, numpy, pandas, mlflow,
+#   innersight-schemas (path dep).
+# Dev deps: pytest, pytest-asyncio, ruff, mypy.

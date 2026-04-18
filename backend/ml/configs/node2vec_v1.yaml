@@ -1,0 +1,3 @@
+# Hydra config for Node2Vec baseline.
+# Params: embedding_dim=64, walk_length, walks_per_node, p, q, epochs, lr.
+# Date range, feature_version, output collection name.

@@ -1,0 +1,5 @@
+# Dev stack — brings up all services for local development (blueprint §3).
+# Services: postgres:16, qdrant, redis:7-alpine, minio, api (port 8000), worker, web (port 5173).
+# Two networks: 'internal' (postgres/qdrant/redis/minio/api/worker) and 'web' (api/web).
+# web service is on 'web' only — cannot reach databases directly (architecture contract ADR-0001).
+# Volumes: pgdata, qdrantdata, miniodata for persistence between restarts.

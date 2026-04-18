@@ -1,0 +1,5 @@
+# Declarative Qdrant collection specifications (blueprint §5).
+# Defines all four collections: user_day_iforest_v1 (dim=15), user_day_node2vec_v1 (dim=64),
+# user_day_graphsage_v1 (dim=128), user_day_rgcn_v1 (dim=128).
+# All use cosine distance. HNSW params: m=16, ef_construct=200, ef_search=128.
+# Applied at container startup via a one-shot init container or bootstrap.sh.
