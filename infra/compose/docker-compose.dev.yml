@@ -1,0 +1,105 @@
+networks:
+  internal:
+  web:
+
+volumes:
+  pgdata:
+  qdrantdata:
+  miniodata:
+
+services:
+
+  postgres:
+    image: postgres:16
+    networks: [internal]
+    environment:
+      POSTGRES_USER: innersight
+      POSTGRES_PASSWORD: innersight
+      POSTGRES_DB: innersight
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ../../infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U innersight"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.0
+    networks: [internal]
+    volumes:
+      - qdrantdata:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:6333/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    networks: [internal]
+
+  minio:
+    image: minio/minio
+    networks: [internal]
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    volumes:
+      - miniodata:/data
+    ports:
+      - "9001:9001"
+
+  api:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile
+    networks: [internal, web]
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://innersight:innersight@postgres:5432/innersight
+      QDRANT_URL: http://qdrant:6333
+      REDIS_URL: redis://redis:6379/0
+      CORS_ORIGINS: '["http://localhost:5173"]'
+      LOG_LEVEL: INFO
+      FEATURE_VERSION: v1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  worker:
+    build:
+      context: ../../apps/worker
+      dockerfile: Dockerfile
+    networks: [internal]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://innersight:innersight@postgres:5432/innersight
+      QDRANT_URL: http://qdrant:6333
+      REDIS_URL: redis://redis:6379/0
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+      FEATURE_VERSION: v1
+    depends_on:
+      - postgres
+      - qdrant
+      - redis
+      - minio
+    command: ["hello"]
+
+  # web service — frontend team owns apps/web/Dockerfile
+  web:
+    image: nginx:alpine
+    networks: [web]
+    ports:
+      - "5173:80"

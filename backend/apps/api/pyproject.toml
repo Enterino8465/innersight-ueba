@@ -1,5 +1,0 @@
-# Python project config for the API service.
-# Dependencies: fastapi, uvicorn, sqlalchemy[asyncio], alembic, asyncpg,
-#   pydantic-settings, qdrant-client, python-jose[cryptography], passlib[bcrypt],
-#   prometheus-client, innersight-schemas (path dep).
-# Dev deps: pytest, pytest-asyncio, httpx, pytest-mock, ruff, mypy.
